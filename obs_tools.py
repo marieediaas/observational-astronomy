@@ -1,3 +1,9 @@
+#Institution: Brazilian National Observatory
+#Subject: Observational Astronomy
+#Author: Mariane Dias de Souza Gomes
+#Date: September/2024
+#Scripts 
+
 from astroquery.vizier import Vizier
 from astropy.coordinates import Angle
 import astropy.units as u
@@ -37,12 +43,13 @@ def magnitude_comp(n, positions, flux_count, flux_count_pluto):
         mag = float(result[0][0]["Gmag"])
         kk = mag + 2.5*math.log10(flux)
         k_cte[i]=kk
-
+    
+    #mags_std = statistics.stdev(mags)
     k_mean = statistics.mean(k_cte)
     k_std = statistics.stdev(k_cte)
     pluto_mag = k_mean - 2.5*math.log10(flux_count_pluto)
 
-    return k_mean, k_std, pluto_mag
+    return k_mean, k_std, pluto_mag#, mags_std
     
 
 
@@ -75,6 +82,9 @@ def astrometric_correction(n, positions, year_sci, month_sci):
     
     ra_corr = np.zeros(n)
     de_corr = np.zeros(n)
+    delta_ra = np.zeros(n)
+    delta_de = np.zeros(n)   
+    
     for i in range(n):
         radec = positions[i]
         result = Vizier.query_region(coord.SkyCoord(radec, unit=(u.hourangle, u.deg)),
@@ -89,5 +99,6 @@ def astrometric_correction(n, positions, year_sci, month_sci):
 
         ra_corr[i] = ra + (pmra_deg/np.cos(de))*deltat
         de_corr[i] = de + pmde_deg*deltat
+        
         
     return ra_corr, de_corr
