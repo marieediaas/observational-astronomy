@@ -102,3 +102,14 @@ def astrometric_correction(n, positions, year_sci, month_sci):
         
         
     return ra_corr, de_corr
+
+def SNR(gain, rad, flux_star, flux_sky):
+    """
+    This function computes the signal-to-noise ratio based on aperture photometry.
+    gain      ----> gain of the ccd
+    rad       ----> aperture radius
+    flux_star ----> the star flux in counts of the ccd
+    flux_sky  ----> the sky flux in counts 
+    """
+    SNR = (flux_star*gain)/np.sqrt(flux_star*gain + flux_sky*gain*np.pi*rad**2)
+    return SNR
